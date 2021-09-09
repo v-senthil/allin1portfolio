@@ -1,0 +1,145 @@
+{% extends 'nav.html' %}
+
+
+{% block title %} Medium {% endblock title %}
+{% block favicon %}
+  <link rel="shortcut icon" type="image/jpg" href="https://img.icons8.com/ios-filled/50/000000/medium-monogram--v1.png"/>
+{% endblock favicon %}
+
+{% block style %}
+.card1 {
+box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+max-width: 350px;
+margin: auto;
+margin-top: 70px;
+text-align: center;
+font-family: arial;
+}
+
+.title {
+color: grey;
+font-size: 18px;
+}
+
+button {
+border: none;
+outline: 0;
+display: inline-block;
+padding: 8px;
+color: white;
+background-color: #000;
+text-align: center;
+cursor: pointer;
+width: 100%;
+font-size: 18px;
+}
+
+a {
+text-decoration: none;
+font-size: 22px;
+color: black;
+}
+
+button:hover, a:hover {
+opacity: 0.7;
+}
+   ::-webkit-scrollbar {
+     width: 5px;
+   }
+
+   ::-webkit-scrollbar-track {
+     box-shadow: inset 0 0 5px grey;
+     border-radius: 10px;
+   }
+   ::-webkit-scrollbar-thumb {
+     background:blue;
+     border-radius: 10px;
+   }
+   ::-webkit-scrollbar-thumb:hover {
+     background: blue;
+   }
+{% endblock style %}
+
+
+
+
+{% block content %}
+
+{% if name=="none" %}
+	<body onload="document.getElementById('id01').style.display='block'" style="width:auto;">
+{% endif %}
+<div id="id01" class="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Enter your Medium username</h5>
+        <span onclick="document.getElementById('id01').style.display='none'"
+      class="w3-button w3-display-topright">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form action="/medium" method="post">
+		  <div class="form-group">
+		    <label for="exampleInputPassword1">Username</label>
+		    <input type="text" class="form-control" id="mediumuser" name="mediumuser" placeholder="Medium Username (without @)" required>
+		  </div>
+		  <div class="form-group form-check">
+		    <input type="checkbox" class="form-check-input" id="exampleCheck1" required>
+		    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+		  </div>
+		  <button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% if  userdata %}
+<div class="card1">
+  <img src="{{ userdata['profile_image'] }}" alt="{{ userdata['username'] }}" style="width:100%">
+  <h1>{{ userdata['name'] }}</h1>
+    <p class="title"><b>{{ userdata['summary'] }}<b></p>
+  <p class="title"><b>Goined at: <b> {{ userdata['joined_at'] }}</p>
+    <p class="title"><b>Location: <b> {{ userdata['location'] }}</p>
+  <div style="margin: 24px 0;">
+    <a href="https://github.com/{{ userdata['github_username'] }}"><i class="fa fa-github"></i></a>
+    <a href="{{ userdata['website_url'] }}"><i class="fa fa-chrome"></i></a>
+  </div>
+  <p><a href="https://dev.to/{{ userdata['username'] }}"<button class="btn btn-primary">Blog</button></a></p> <br>
+</div>
+{% endif %}
+
+{% if data %}
+<section class="mytabs_area p_120" data-section="about">
+      <div class="colorlib-narrow-content"> <br><br><br>
+        <div class="row">
+          <div class="main_title">
+            <h2>{{ error }}</h2>
+            <br><br><!-- <p>If you are looking at blank cassettes on the web, you may be very confused at the difference in price. You may see some for as low as $.17 each.</p> -->
+          </div>
+        </div>
+      <div class="row">
+        {% for i in data %}
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title">{{ i['title'] }}</h3>
+			        <a href="{{ i['id'] }}" style="font-size: 100%;"><p class="card-text">{{ i['id'] }} </p></a><br>
+              <p class="card-text">Author: {{ i['author'] }}</p>
+               <p class="card-text">Published at: {{ i['published'] }}</p>
+               <!-- {% for list in  i['tags'] %}
+                <b style="color: orange;">{{ list['term'] }}</b>
+              {% endfor %} -->
+              <br><br>
+              <a href="{{ i['link'] }}"  target="_blank" class="btn btn-primary">View in Dev.to</a>
+            </div>
+          </div> <br><br>
+        </div>
+        {% endfor %}
+      </div>
+      <br>
+      </div>
+      </section>
+{% endif %}
+
+{% endblock content %}
