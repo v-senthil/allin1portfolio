@@ -27,7 +27,7 @@ def github():
 		userurl = "https://api.github.com/users/"+gituser
 		userdatares =  requests.request("GET", userurl, headers=headers)
 		if response.status_code != 200 and userdatares.status_code != 200:
-			return render_template('error.html')
+			return render_template('error.html', error="User not found")
 		else:
 			posts = response.json()
 			userdata = userdatares.json()
@@ -45,7 +45,7 @@ def githuburl(name):
 	userurl = "https://api.github.com/users/"+name
 	userdatares =  requests.request("GET", userurl, headers=headers)
 	if response.status_code != 200 and userdatares.status_code != 200:
-		return render_template('error.html')
+		return render_template('error.html', error="User not found")
 	else:
 		posts = response.json()
 		userdata = userdatares.json()
@@ -63,17 +63,19 @@ def twitter():
 		response = requests.request("GET", url, headers=headers)
 		userdata = response.json()
 		if 'data' not in userdata:
-			return render_template('error.html')
+			return render_template('error.html', error="User not found")
 		else:
 			userid = userdata['data']['id']
-		postsurl = "https://api.twitter.com/2/users/"+ userid +"/tweets?tweet.fields=created_at,lang,source,public_metrics&media.fields=url"
-		postsres =  requests.request("GET", postsurl, headers=headers)
-		post = postsres.json()
-		posts = post['data']
-		userres = response.json()
-		userdata = userres['data']
-		lendata = len(posts)
-		return render_template('twitter.html', twitteruser=twitteruser, posts=posts, userdata=userdata)
+			postsurl = "https://api.twitter.com/2/users/"+ userid +"/tweets?tweet.fields=created_at,lang,source,public_metrics&media.fields=url"
+			postsres =  requests.request("GET", postsurl, headers=headers)
+			post = postsres.json()
+			if 'data' not in post:
+				return render_template('error.html', error="No tweets found for this user!")
+			posts = post['data']
+			userres = response.json()
+			userdata = userres['data']
+			lendata = len(posts)
+			return render_template('twitter.html', twitteruser=twitteruser, posts=posts, userdata=userdata)
 	else:
 		return render_template('twitter.html', twitteruser="none")
 
@@ -91,6 +93,8 @@ def twitterurl(name):
 		postsurl = "https://api.twitter.com/2/users/"+ userid +"/tweets?tweet.fields=created_at,lang,source,public_metrics&media.fields=url"
 		postsres =  requests.request("GET", postsurl, headers=headers)
 		post = postsres.json()
+		if 'data' not in post:
+			return render_template('error.html', error="No tweets found for this user!")
 		posts = post['data']
 		userres = response.json()
 		userdata = userres['data']
@@ -110,7 +114,7 @@ def devto():
 		userurl = "https://dev.to/api/users/by_username?url="+devtouser
 		userdatares =  requests.request("GET", userurl, headers=headers)
 		if len(response.text) < 5 and len(userdatares.text) < 5:
-			return render_template('error.html')
+			return render_template('error.html', error="User not found")
 		else:
 			posts = response.json()
 			userdata = userdatares.json()
@@ -128,7 +132,7 @@ def devtourl(name):
 	userurl = "https://dev.to/api/users/by_username?url="+name
 	userdatares =  requests.request("GET", userurl, headers=headers)
 	if len(response.text) == 2:
-		return render_template('error.html')
+		return render_template('error.html', error="User not found")
 	else:
 		posts = response.json()
 		userdata = userdatares.json()
@@ -144,7 +148,7 @@ def medium():
 		rss_url = "https://medium.com/feed/@"+mediumuser
 		urldata = feedparser.parse(rss_url)
 		if len(urldata["entries"]) <= 0:
-			return render_template('error.html')
+			return render_template('error.html', error="User not found")
 		else:
 			data = urldata["entries"]
 			return render_template('medium.html', name=mediumuser, data=data)
@@ -157,7 +161,7 @@ def mediumurl(name):
 	rss_url = "https://medium.com/feed/@"+name
 	urldata = feedparser.parse(rss_url)
 	if len(urldata["entries"]) <= 0:
-		return render_template('error.html')
+		return render_template('error.html', error="User not found")
 	else:
 		data = urldata["entries"]
 		return render_template('medium.html', name=name, data=data)

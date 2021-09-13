@@ -39,13 +39,14 @@ import requests
 
 
 ############## Twitter ##################
-url = "https://api.twitter.com/2/users/"+ "873477278671421441" +"/tweets?tweet.fields=created_at,lang,source,public_metrics&media.fields=url"
+url = "https://api.twitter.com/2/users/"+ "2179981292" +"/tweets?tweet.fields=created_at,lang,source,public_metrics&media.fields=url"
 headers = {'Authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAAHm%2FPwEAAAAA%2BiJOwgFvf2dust9tr0vI2Eib%2Bsc%3DG6HL3zlLS2QRtyHrDWEQ9JlPLvj4oPB8MMRIZWAsH1QqiUEuSM'}
 response = requests.request("GET", url, headers=headers)
 posts = response.json()
-data = posts['data']
-if 'data' not in posts:
-	print("error")
-else:
-	for i in data:
-		print(i['public_metrics']['like_count'])
+print(posts)
+# data = posts['data']
+# if 'data' not in posts:
+# 	print("error")
+# else:
+# 	for i in data:
+# 		print(i['public_metrics']['like_count'])
