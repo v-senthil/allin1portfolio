@@ -1,8 +1,5 @@
 import requests
 # url = "https://api.github.com/users/v-senthil"
-# headers = {
-#    'Authorization': 'token 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'
-# }
 # response = requests.request("GET", url, headers=headers)
 # data = response.json()
 # print(response.status_code)
