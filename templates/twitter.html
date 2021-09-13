@@ -1,15 +1,143 @@
 {% extends 'nav.html' %}
 
+{% block title %} Twitter {% endblock title %}
     {% block favicon %}
     	<link rel="shortcut icon" type="image/jpg" href="https://img.icons8.com/color/30/000000/twitter.png"/>
     {% endblock favicon %}
 
-{% block title %} Twitter {% endblock title %}
+
+    {% block style %}
+    .card1 {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 350px;
+    margin: auto;
+    margin-top: 70px;
+    text-align: center;
+    font-family: arial;
+    }
+
+    .title {
+    color: grey;
+    font-size: 18px;
+    }
+
+    button {
+    border: none;
+    outline: 0;
+    display: inline-block;
+    padding: 8px;
+    color: white;
+    background-color: #000;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    font-size: 18px;
+    }
+
+    a {
+    text-decoration: none;
+    font-size: 22px;
+    color: black;
+    }
+
+    button:hover, a:hover {
+    opacity: 0.7;
+    }
+       ::-webkit-scrollbar {
+         width: 5px;
+       }
+
+       ::-webkit-scrollbar-track {
+         box-shadow: inset 0 0 5px grey;
+         border-radius: 10px;
+       }
+       ::-webkit-scrollbar-thumb {
+         background:blue;
+         border-radius: 10px;
+       }
+       ::-webkit-scrollbar-thumb:hover {
+         background: blue;
+       }
+    {% endblock style %}
 
 
-{% block content %}
 
 
-<h1> hey </h1>
+    {% block content %}
 
-{% endblock content %}
+    {% if twitteruser=="none" %}
+    	<body onload="document.getElementById('id01').style.display='block'" style="width:auto;">
+    {% endif %}
+    <div id="id01" class="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Enter your Twitter username</h5>
+            <span onclick="document.getElementById('id01').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+          </div>
+          <div class="modal-body">
+            <form action="/twitter" method="post">
+    		  <div class="form-group">
+    		    <label for="exampleInputPassword1">Username</label>
+    		    <input type="text" class="form-control" id="twitterusername" name="twitterusername" placeholder="Twitter Username" required>
+    		  </div>
+    		  <div class="form-group form-check">
+    		    <input type="checkbox" class="form-check-input" id="exampleCheck1" required>
+    		    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+    		  </div>
+    		  <button type="submit" class="btn btn-primary">Submit</button>
+    		</form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if userdata %}
+    <div class="card1">
+      <img src="{{ userdata['profile_image_url'] }}" alt="{{ userdata['username'] }}" style="width:100%">
+      <h1>{{ userdata['name'] }}</h1>
+        <p class="title"><b>{{ userdata['description'] }}<b></p>
+      <p class="title"><b>Goined at: <b> {{ userdata['created_at'][0:10] }}</p>
+        <p class="title"><b>Location: <b> {{ userdata['location'] }}</p>
+      <!-- <div style="margin: 24px 0;">
+        <a href="https://twitter.com/{{ userdata['username'] }}"><i class="fa fa-github"></i></a>
+        <a href="{{ userdata['website_url'] }}"><i class="fa fa-chrome"></i></a>
+      </div> -->
+      <p><a href="https://twitter.com/{{ userdata['username'] }}"<button class="btn btn-primary">View profile</button></a></p> <br>
+    </div>
+    {% endif %}
+
+    {% if posts %}
+    <section class="mytabs_area p_120" data-section="about">
+          <div class="colorlib-narrow-content"> <br><br><br>
+            <div class="row">
+              <div class="main_title">
+                <h2>{{ error }}</h2>
+                <br><br><!-- <p>If you are looking at blank cassettes on the web, you may be very confused at the difference in price. You may see some for as low as $.17 each.</p> -->
+              </div>
+            </div>
+          <div class="row">
+            {% for i in posts %}
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+    			        <p class="card-text">{{ i['text'] }}</p>
+                  <p class="card-text">Created at: {{ i['created_at'] }}</p>
+                   <p class="card-text">Source: {{ i['source'] }}</p>
+                   <p class="card-text">Retweet Count: {{ i['public_metrics']['retweet_count'] }}</p>
+                   <p class="card-text">Reply Count: {{ i['public_metrics']['reply_count'] }}</p>
+                   <p class="card-text">Like Count: {{ i['public_metrics']['like_count'] }}</p>
+                  <br><br>
+                  <a href="https://twitter.com/{{twitteruser}}/status/{{ i['id'] }}"  target="_blank" class="btn btn-primary">View in Twitter</a>
+                </div>
+              </div> <br><br>
+            </div>
+            {% endfor %}
+          </div>
+          <br>
+          </div>
+          </section>
+    {% endif %}
+
+    {% endblock content %}

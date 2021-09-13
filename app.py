@@ -53,9 +53,50 @@ def githuburl(name):
 		return render_template('github.html', gituser=name, posts=posts, userdata=userdata)
 
 # Twitter
-@app.route("/twitter")
+@app.route("/twitter", methods=["POST", "GET"])
 def twitter():
-	return render_template('twitter.html')
+	if request.method == 'POST':
+		twitteruser = request.form['twitterusername']
+		session["twitteruser"] = twitteruser
+		url = "https://api.twitter.com/2/users/by/username/"+ twitteruser +"?user.fields=profile_image_url,verified,description,location,created_at"
+		headers = {'Authorization': os.getenv('Twitter')}
+		response = requests.request("GET", url, headers=headers)
+		userdata = response.json()
+		if 'data' not in userdata:
+			return render_template('error.html')
+		else:
+			userid = userdata['data']['id']
+		postsurl = "https://api.twitter.com/2/users/"+ userid +"/tweets?tweet.fields=created_at,lang,source,public_metrics&media.fields=url"
+		postsres =  requests.request("GET", postsurl, headers=headers)
+		post = postsres.json()
+		posts = post['data']
+		userres = response.json()
+		userdata = userres['data']
+		lendata = len(posts)
+		return render_template('twitter.html', twitteruser=twitteruser, posts=posts, userdata=userdata)
+	else:
+		return render_template('twitter.html', twitteruser="none")
+
+#Twitter from url
+@app.route("/profile/twitter/<name>")
+def twitterurl(name):
+	url = "https://api.twitter.com/2/users/by/username/"+ name +"?user.fields=profile_image_url,verified,description,location,created_at"
+	headers = {'Authorization': os.getenv('Twitter')}
+	response = requests.request("GET", url, headers=headers)
+	userdata = response.json()
+	if 'data' not in userdata:
+		return render_template('error.html')
+	else:
+		userid = userdata['data']['id']
+		postsurl = "https://api.twitter.com/2/users/"+ userid +"/tweets?tweet.fields=created_at,lang,source,public_metrics&media.fields=url"
+		postsres =  requests.request("GET", postsurl, headers=headers)
+		post = postsres.json()
+		posts = post['data']
+		userres = response.json()
+		userdata = userres['data']
+		lendata = len(posts)
+		return render_template('twitter.html', twitteruser=name, posts=posts, userdata=userdata)
+
 
 # Dev.to
 @app.route("/devto",methods=['POST', 'GET'])
